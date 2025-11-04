@@ -15,6 +15,7 @@ public class KnowledgeService {
     public KnowledgeService() {
 
         String apiKey = System.getenv("GOOGLE_API_KEY");
+        System.out.println("Google API Key: " + System.getenv("GOOGLE_API_KEY"));
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException("Missing GOOGLE_API_KEY environment variable");
         }
@@ -99,7 +100,7 @@ public class KnowledgeService {
                     "Question: " + trimmedQuery;
 
             GenerateContentResponse response = client.models.generateContent(
-                    "gemini-1.5-flash",
+                    "gemini-2.0-flash",
                     prompt,
                     null
             );

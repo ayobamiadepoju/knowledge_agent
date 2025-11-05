@@ -24,9 +24,9 @@ public class KnowledgeController {
 
     // 🔹 Basic test endpoint (manual check via browser/Postman)
     @GetMapping("/test")
-    public String test(@RequestParam(required = false) String q) {
+    public String test(@RequestParam(required = false) String text) {
         return knowledgeService.generateResponse(
-                q != null ? q : "Explain dependency injection in Spring Boot."
+                text != null ? text : "Explain dependency injection in Spring Boot."
         );
     }
 

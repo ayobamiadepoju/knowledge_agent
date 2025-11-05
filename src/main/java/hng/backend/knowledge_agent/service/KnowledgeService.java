@@ -15,16 +15,13 @@ public class KnowledgeService {
     public KnowledgeService() {
 
         String apiKey = System.getenv("GOOGLE_API_KEY");
-        System.out.println("Google API Key: " + System.getenv("GOOGLE_API_KEY"));
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException("Missing GOOGLE_API_KEY environment variable");
         }
 
         // Trim any whitespace from the API key
         apiKey = apiKey.trim();
-
-        System.out.println("API Key loaded: Yes");
-
+        
         try {
             this.client = Client.builder()
                     .apiKey(apiKey)
@@ -113,12 +110,20 @@ public class KnowledgeService {
 
             return responseText;
 
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return "I ran into an error while finding your answer.";
+        } catch (com.google.genai.errors.ClientException e) {
+            if (e.getMessage() != null) {
+                if (e.getMessage().contains("429")) {
+                    return "I'm currently receiving too many requests. Please try again in a few seconds.";
+                }
+                if (e.getMessage().toLowerCase().contains("stream")) {
+                    return "There was a temporary issue while streaming the AI response. Please retry shortly.";
+                }
+            }
+            return "The AI service encountered an issue: " + e.getMessage();
+
         } catch (Exception e) {
             e.printStackTrace();
-            return "I ran into an error while finding your answer.";
+            return "I ran into an unexpected error while finding your answer.";
         }
     }
 }

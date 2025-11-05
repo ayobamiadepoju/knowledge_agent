@@ -35,17 +35,17 @@ public class KnowledgeController {
     }
 
     // 🔹 Required A2A webhook for Telex
-    @SuppressWarnings("unchecked")
+   @SuppressWarnings("unchecked")
     @PostMapping(value = "/hook", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Map<String, Object>> handleTelexWebhook(@RequestBody Map<String, Object> payload) {
 
         String userText = knowledgeService.extractUserText(payload);
-        log.info("📩 Incoming Telex message: {}", userText);
+        System.out.println("📩 Incoming Telex message: " + userText);
 
         String aiResponse = knowledgeService.generateResponse(userText);
-        log.info("🤖 AI response: {}", aiResponse);
+        System.out.println("🤖 AI response: " + aiResponse);
 
-        // ✅ A2A-compliant structure
+        // ✅ A2A-compliant message object
         Map<String, Object> messagePart = Map.of("kind", "text", "text", aiResponse);
         Map<String, Object> messageObject = Map.of(
                 "role", "agent",
@@ -53,16 +53,11 @@ public class KnowledgeController {
                 "kind", "message"
         );
 
-        // ✅ Add visible field for Telex logs
-        Map<String, Object> result = new HashMap<>();
-        result.put("success", true);
-        result.put("message", aiResponse); // Telex will log this
-        result.put("data", messageObject); // Keep A2A structure for compatibility
-
+        // ✅ JSON-RPC 2.0 Response
         Map<String, Object> response = new HashMap<>();
         response.put("jsonrpc", "2.0");
         response.put("id", payload.getOrDefault("id", UUID.randomUUID().toString()));
-        response.put("result", result);
+        response.put("result", messageObject);
 
         return ResponseEntity.ok()
                 .header("Connection", "close")
@@ -75,4 +70,5 @@ public class KnowledgeController {
         return "🧠 KnowledgeAgent webhook active! Send POST requests to /agent/hook";
     }
 }
+
 

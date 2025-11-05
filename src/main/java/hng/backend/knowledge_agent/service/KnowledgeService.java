@@ -92,9 +92,13 @@ public class KnowledgeService {
             }
 
             String trimmedQuery = query.trim();
-            String prompt = "You are a backend development assistant. " +
-                    "Provide clear, concise answers about programming, frameworks, and backend concepts. " +
-                    "Question: " + trimmedQuery;
+            String prompt = """
+You are CodeWhiz — a helpful backend AI assistant.
+Provide a clear, direct answer for the following question.
+Then include 2–3 official or reputable learning resources (docs, tutorials, GitHub links).
+
+Question:
+""" + trimmedQuery;
 
             GenerateContentResponse response = client.models.generateContent(
                     "gemini-2.0-flash",

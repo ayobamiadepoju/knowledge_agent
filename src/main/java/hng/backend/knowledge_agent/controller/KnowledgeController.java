@@ -1,6 +1,8 @@
 package hng.backend.knowledge_agent.controller;
 
 import hng.backend.knowledge_agent.service.KnowledgeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,6 +11,8 @@ import java.util.*;
 @RestController
 @RequestMapping("/knowledge")
 public class KnowledgeController {
+
+    private static final Logger log = LoggerFactory.getLogger(KnowledgeController.class);
 
     private final KnowledgeService knowledgeService;
 
@@ -36,10 +40,10 @@ public class KnowledgeController {
     public ResponseEntity<Map<String, Object>> handleTelexWebhook(@RequestBody Map<String, Object> payload) {
 
         String userText = knowledgeService.extractUserText(payload);
-        System.out.println("📩 Incoming Telex message: " + userText);
+        log.info("📩 Incoming Telex message: " + userText);
 
         String aiResponse = knowledgeService.generateResponse(userText);
-        System.out.println("🤖 AI response: " + aiResponse);
+        log.info("🤖 AI response: " + aiResponse);
 
         // ✅ A2A-compliant message object
         Map<String, Object> messagePart = Map.of("kind", "text", "text", aiResponse);

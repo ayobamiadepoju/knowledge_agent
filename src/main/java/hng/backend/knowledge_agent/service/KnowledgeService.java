@@ -2,6 +2,9 @@ package hng.backend.knowledge_agent.service;
 
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
+import hng.backend.knowledge_agent.controller.KnowledgeController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,6 +12,8 @@ import java.util.Map;
 
 @Service
 public class KnowledgeService {
+
+    private static final Logger log = LoggerFactory.getLogger(KnowledgeController.class);
 
     private final Client client;
 
@@ -112,6 +117,7 @@ Question:
                 return "I couldn't generate a response. Please try again.";
             }
 
+            log.info("🤖 AI response for query [{}]: {}", query, responseText);
             return responseText;
 
         } catch (com.google.genai.errors.ClientException e) {
